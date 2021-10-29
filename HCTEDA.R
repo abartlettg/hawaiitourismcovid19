@@ -74,13 +74,26 @@ hcrt[is.na(hcrt$end_dt), "end_dt"] <- today
 # Moving on to different method found at...
 # https://rforpoliticalscience.com/2021/02/25/make-a-timeline-graph-with-dates-in-ggplot2/
 
+# Add number of instances where the rule is in effect... this will make it
+# possible to keep multiple start and end dates in place for the same rule 
+# on the graph
+
+hcrt <- mutate(hcrt, number = 1)
+hcrt <- mutate(hcrt, order = 1)
+hcrt <- mutate(hcrt, count = 1)
+
 time_line <- hcrt %>% 
   ggplot(aes(x = start_dt), y = uid, color = type) +
-  geom_segment(aes(xend = end_dt, yend = uid, color =  type), size = 6)
+  geom_segment(aes(xend = end_dt, y=uid, yend = uid, color =  type), size = 4) #+
+  #geom_text(aes(label = order, hjust = 1.1), size = 8, show.legend = FALSE) +
+  #scale_color_manual(values = c("R" = "#004266", "L" = "#FCB322", "C" = "#D62828"))
 
-#+
-#  geom_text(aes(label = order, hjust = ifelse(taoiseach_number < 2, -0.7, 1.1)), size = 8, show.legend = FALSE) +
-#  scale_color_manual(values = c("Fine Gael" = "#004266", "Fianna Fáil" = "#FCB322", "Cumann na nGaedheal" = "#D62828"))
+time_line
+
+# The resulting graph is very hard to read... in the sense of interpretability
+# I probably need to cluster rules by type and show tightening and loosening
+# by type... such as quarantine vs test exception vs vaccine exception all as
+# one type w/various stages of restriction
 
 
 
