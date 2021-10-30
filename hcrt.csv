@@ -1,0 +1,27 @@
+"","uid","proc_id","proc_dt","short_desc","type","start_dt","end_dt"
+"1",1,2,2020-03-21,"State Entry 14 Day Quarantine","R",2020-03-26,2020-12-16
+"2",2,3,2020-03-23,"Stay At Home Order","R",2020-03-25,2020-04-30
+"3",3,4,2020-03-31,"Inter-Island 14 Day Quarantine","R",2020-04-01,2020-06-15
+"4",4,5,2020-04-16,"All Beaches Closed","R",2020-04-17,2021-10-29
+"5",5,5,2020-04-16,"Boating Restrictions","R",2020-04-17,2021-10-29
+"6",6,5,2020-04-16,"Hiking Restrictions","R",2020-04-17,2021-10-29
+"7",7,5,2020-04-16,"Fishing and Gathering Restrictions","R",2020-04-17,2021-10-29
+"8",8,6,2020-04-25,"Stay At Home Order Extended","R",2020-04-26,2020-05-31
+"9",9,6,2020-04-25,"Gatherings Limited to No More than 10 People","R",2020-04-26,2020-05-31
+"10",10,7,2020-05-05,"All Beaches Closed","C",2020-05-05,2021-10-29
+"11",11,7,2020-05-05,"Shore Fishing Limitations","C",2020-05-05,2021-10-29
+"12",12,7,2020-05-05,"Re-Opening of Retail & Repair Services (including in Mall)","L",2020-05-07,2021-10-29
+"13",13,8,2020-05-18,"Prohibition on Renting Vehicles & Car Sharing Platforms","R",2020-05-18,2021-10-29
+"14",14,9,2020-06-10,"Host Responsibility","R",2020-06-10,2021-10-29
+"15",15,10,2020-07-17,"Short-Term Rental Restriction","R",2020-07-17,2021-10-29
+"16",16,11,2020-08-06,"Inter-Island 14 Day Quarantine (Second)","R",2020-08-11,2020-12-16
+"18",17,12,2020-08-20,"Enhanced Movement Quarantine","L",2020-08-20,2021-10-29
+"19",18,13,2020-09-22,"State Entry Negative Test Exception","L",2020-10-15,2021-10-29
+"24",19,13,2020-09-22,"Inter-Island Negative Test Exception Option","L",2020-09-22,2021-10-29
+"26",20,17,2020-12-16,"Inter-Island 10 Day Quarantine","L",2020-12-17,2021-06-14
+"28",21,17,2020-12-16,"State Entry 10 Day Quarantine","L",2020-12-17,2021-10-29
+"29",22,19,2021-02-14,"Announcement that Vaccine Exception is Coming","C",2021-02-14,2021-10-29
+"30",23,20,2021-05-07,"Inter-Island Vaccine Exception Option","L",2021-05-07,2021-10-29
+"32",24,21,2021-08-05,"State Entry Vaccine Exception","L",2021-08-05,2021-10-29
+"36",25,101,2021-08-23,"Governor asks travelers to avoid Hawaii ","R",2021-08-23,2021-11-01
+"37",26,102,2021-10-19,"Governor welcomes fully vaccinated travelers to come back starting in November","L",2021-11-01,2021-10-29
