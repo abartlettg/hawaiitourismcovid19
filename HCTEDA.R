@@ -1,6 +1,8 @@
 ##### EDA for Hawaii COVID Tourism Study #####
 
 # Load Libraries
+################ CLEAN UP THIS SEGMENT AT END TO INCLUDE ##############
+################ ONLY LIBRARIES REALLY USED              ##############
 
 library(timevis)
 library(tidyr)
@@ -9,6 +11,17 @@ library(ggplot2)
 library(lubridate)
 library(readr)
 library(stringr)
+library(plotly)
+
+
+#######################################################################
+# Note that it is expected that the TourismStatsDuringCOVID.csv file
+# comes in w/char values that should be int already converted in Excel.
+# If this code was to be put into production for regular updates, the
+# preprocessing of this file should all be done in the R code to avoid
+# this manual step... changing char to num and eliminating decimal.
+#######################################################################
+
 
 # Reading in Data Files
 
@@ -39,13 +52,11 @@ ccbrs$DateAddedCopy <- as.Date(ccbrs$DateAddedCopy, "%m/%d/%Y")
 # if I stick to doing it this way... change to number and remove .00 so it's
 # automatically read in as an integer
 
+########### COME BACK LATER TO INCLUDE CODE TO PREPROCESS ##################
 # cnlist <- colnames(tsdc)
 # cnlistX <- cnlist[5:36]
 
 # for (i in cnlistX)tsdc[,i]<-as.numeric(tsdc[,i])
-
-
-#as.Date(tsdc$X*, "%m/%d/%Y")
 
 #for (i in cnlistX) {
   #coltotransform = paste("tsdc$", i, sep='')
@@ -63,24 +74,21 @@ ccbrs$DateAddedCopy <- as.Date(ccbrs$DateAddedCopy, "%m/%d/%Y")
 today = Sys.Date()
 hcrt[is.na(hcrt$end_dt), "end_dt"] <- today
 
-# Visualizing hcrt as a timeline
+##############################
+# vISUALIZING HCRT IN TIMELINE
+##############################
 
-# Tried timevis, bu this doesn't work and the resulting chart was not
-# really impressive anyway
-#hcrtfortimevis = rename(hcrt, start = start_dt, end = end_dt, 
-#                        content = as.char(uid))
-#timevis(hcrtfortimevis)
-
-# Moving on to different method found at...
+# Utilized example of how to create timeline from this source...
 # https://rforpoliticalscience.com/2021/02/25/make-a-timeline-graph-with-dates-in-ggplot2/
 
 # Add number of instances where the rule is in effect... this will make it
 # possible to keep multiple start and end dates in place for the same rule 
 # on the graph
 
-hcrt <- mutate(hcrt, number = 1)
-hcrt <- mutate(hcrt, order = 1)
-hcrt <- mutate(hcrt, count = 1)
+
+#hcrt <- mutate(hcrt, number = 1)
+#hcrt <- mutate(hcrt, order = 1)
+#hcrt <- mutate(hcrt, count = 1)
 
 time_line <- hcrt %>% 
   ggplot(aes(x = start_dt), y = uid, color = type) +
@@ -94,6 +102,24 @@ time_line
 # I probably need to cluster rules by type and show tightening and loosening
 # by type... such as quarantine vs test exception vs vaccine exception all as
 # one type w/various stages of restriction
+
+# Experiment w/Plotly.Express... Express not available in R
+# plotly.express.timeline(hcrt, start_dt, end_dt, uid)
+
+write.csv(hcrt, file='hcrt.csv')
+
+#######################################################
+# VISUALIZING COVID CASES BY RESIDENT AND TRAVEL STATUS
+#######################################################
+
+# First, check to see if assumed duplicate columns are really duplicates 
+# Risk and RiskCopy and DatAdded and DateAddedCopy
+
+all(ccbrs$Risk == ccbrs$RiskCopy) # Returns TRUE
+all(ccbrs$DateAdded == ccbrs$DateAddedCopy) # Returns TRUE
+
+
+
 
 
 
