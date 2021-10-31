@@ -106,7 +106,12 @@ time_line
 # Experiment w/Plotly.Express... Express not available in R
 # plotly.express.timeline(hcrt, start_dt, end_dt, uid)
 
+
+# Writing out files to experiment with in Python w/plotly.express
 write.csv(hcrt, file='hcrt.csv')
+write.csv(ccbrs, file='ccbrs.csv')
+write.csv(tsdc, file='tsdc.csv')
+
 
 #######################################################
 # VISUALIZING COVID CASES BY RESIDENT AND TRAVEL STATUS
@@ -118,7 +123,22 @@ write.csv(hcrt, file='hcrt.csv')
 all(ccbrs$Risk == ccbrs$RiskCopy) # Returns TRUE
 all(ccbrs$DateAdded == ccbrs$DateAddedCopy) # Returns TRUE
 
+#######################################################
+# PREPPING FILES FOR GRAPHING IN PYTHON PLOTLY.EXPRESS
+#######################################################
 
+#CCBRS
+
+ccbrstots = ccbrs %>%
+  select(DateAdded, Risk, TotNumber) %>%
+  group_by(DateAdded, Risk) %>%
+  summarize(sum(TotNumber))
+
+ccbrstots
+
+write.csv(ccbrstots, file='ccbrstots.csv')
+
+############### STOPPED WHILE GRAPHING IN PYTHON ########################
 
 
 
