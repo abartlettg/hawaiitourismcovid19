@@ -140,7 +140,28 @@ write.csv(ccbrstots, file='ccbrstots.csv')
 
 ############### STOPPED WHILE GRAPHING IN PYTHON ########################
 
+# Visitor arrivals (SA)
+# Air total
 
+arrivals = tsdc %>%
+  filter(Indicator == 'Visitor arrivals (SA)' &
+           Market == 'Air total')
+
+arrivals = pivot_longer(arrivals, 5:36, names_to = 'Month', 
+                        values_to = 'ArrivalNumSA')
+  
+arrivals$Month = sub('X','',arrivals$Month)
+# Don't delete X at beginning... keep it char?, but then below logic doesn't work
+
+# KEEP CHAR AND NUM VERSIONS OF MONTH 
+ 
+arrivals = arrivals %>%
+  select('Month', 'ArrivalNumSA')
+
+arrivalsCOV = arrivals %>%
+  filter(Month > 'X2020.02')
+
+write.csv(arrivalsCOV, file='arrivalsCOV.csv')
 
 
 
