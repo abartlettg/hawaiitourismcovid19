@@ -250,8 +250,11 @@ dpaxCOV$ArrivalDtMD = sub('2021-', '', dpaxCOV$ArrivalDtMD)
 dpax2019 = subset(dpax2019, select = -ArrivalDt)
 
 
+dpax = left_join(dpaxCOV, dpax2019, by="ArrivalDtMD", suffix=c(".COV",".2019"))
 
+write.csv(dpax, file='dpax.csv')
 
+################# GOING TO PYTHON NOW TO GRAPH ##########################
 
 
 
