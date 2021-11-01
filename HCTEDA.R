@@ -173,20 +173,14 @@ dpaxfull <- read.csv("Data/DailyPassengerCountFullData.csv")
 
 colnames(dpaxfull)[1] <- "ArrivalDt"
 
-dpaxfull$ArrivalDt = as.Date(dpaxfull$ArrivalDt, format = "%m/%d/%Y")
+dpaxfull$ArrivalDt = as.Date(dpaxfull$ArrivalDt, format = "%d-%b-%y")
 
 dpaxfull$Total = sub(',','',dpaxfull$Total)
 
 dpaxfull$Total = as.integer(dpaxfull$Total)
 
-# May need to check for NAs/NULL values... could this be the issue
-# with trying to compare and filter by Date?
-
 
 # Filter for Passenger Counts During COVID and only fields needed
-
-#COVStartDt = "2/29/2020"
-#COVStartDt = as.Date(COVStartDt, format = "%m/%d/%Y")
 
 sum(is.na(dpaxfull$ArrivalDt))
 
@@ -199,19 +193,24 @@ dpaxfull$COVIDStartDt = as.Date(dpaxfull$COVIDStartDt, format = "%m/%d/%Y")
 dpaxCOV = dpaxfull %>%
   filter(ArrivalDt > COVIDStartDt)
 
-max(dpaxfull$ArrivalDt) # This is the problem... The arrival date cannot
+max(dpaxfull$ArrivalDt) 
+
+write.csv(dpaxCOV, file='dpaxCOV.csv')
+############### Notes About Problems Encountered & SOLVED ###################
+# This was the problem... The arrival date cannot
 # be calculated with... but the COVIDStartDt can... what is causing this
 # difference... NAs or Nulls
 
-# Removed NAs, but max on ArrivalDt is indication 2017-12-25... Maybe there
+# Removed NAs, but max on ArrivalDt is indicated as 2017-12-25... Maybe there
 # was a problem w/file creation and there are no dates in there greater than
 # 02-29-202d0... If this is the case, it makes perfect sense why I've been
 # having so much trouble with selecting the records for during COVID
 
-
-
-####### THIS IS DRIVING ME NUTS... PROBLEMS W/DATES ###########
-
+# Found that date format in input file is different for later dates in the
+# file.  Since we only intend to use dates from 2019 onward, I will adjust
+# the output file to not have any dates prior to 2019 and hopefully find
+# that the date data from 2019 onward has a consistent format
+#############################################################################
 
 # Filter for 2019 Counts As Reference
 
