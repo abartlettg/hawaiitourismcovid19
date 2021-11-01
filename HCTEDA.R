@@ -167,11 +167,13 @@ arrivalsCOV = arrivals %>%
 
 write.csv(arrivalsCOV, file='arrivalsCOV.csv')
 
+################################################################
 #### Switching to Daily Passenger Count Data instead of Monthly 
 
 dpaxfull <- read.csv("Data/DailyPassengerCountFullData.csv")
 
 colnames(dpaxfull)[1] <- "ArrivalDt"
+dpaxfull = subset(dpaxfull, select = names(dpaxfull) %in% c('ArrivalDt','Total'))
 
 dpaxfull$ArrivalDt = as.Date(dpaxfull$ArrivalDt, format = "%d-%b-%y")
 
@@ -187,6 +189,9 @@ sum(is.na(dpaxfull$ArrivalDt))
 dpaxfull = dpaxfull %>%
   drop_na(ArrivalDt)
 
+# Having trouble with filtering with date entered in logical so adding
+# a field in the dataframe to hold COVIDStartDt so I can make sure the
+# logical is functioning against the exact same type of date data
 dpaxfull = mutate(dpaxfull, COVIDStartDt = "02/29/2020")
 dpaxfull$COVIDStartDt = as.Date(dpaxfull$COVIDStartDt, format = "%m/%d/%Y")
 
@@ -194,6 +199,8 @@ dpaxCOV = dpaxfull %>%
   filter(ArrivalDt > COVIDStartDt)
 
 max(dpaxfull$ArrivalDt) 
+
+min(dpaxCOV$ArrivalDt)
 
 write.csv(dpaxCOV, file='dpaxCOV.csv')
 ############### Notes About Problems Encountered & SOLVED ###################
@@ -214,19 +221,33 @@ write.csv(dpaxCOV, file='dpaxCOV.csv')
 
 # Filter for 2019 Counts As Reference
 
+dpaxfull = mutate(dpaxfull, RefDt2019 = "12/31/2019")
+dpaxfull$RefDt2019 = as.Date(dpaxfull$RefDt2019, format = "%m/%d/%Y")
+
+dpax2019 = dpaxfull %>%
+  filter(ArrivalDt <= RefDt2019)
+
+dpax2019 = subset(dpax2019, select = -c(COVIDStartDt, RefDt2019))
+dpaxCOV = subset(dpaxCOV, select = -COVIDStartDt)
+
+min(dpax2019$ArrivalDt)
+
+max(dpax2019$ArrivalDt)
 
 
+# Creating a field in both 2019 and COV dataframes that can match on
+# month-day to join and bring 2019 passenger count into COV file for
+# reference... this will make it possible to graph passenger count from
+# same day in 2019 to passenger counts from the start of COVID and on.
 
-# Remove Year and Join by Month/Day Adding Field indicating that this
-# is 2019 reference data... 
-#
-# Day of Week will not line up, but we aren't getting that granular with 
-# this data.
-#
-# 2020 was a leap year, but this won't impact the line graph since we start
-# the COVID graph with March 2020
+dpax2019$ArrivalDtMD = as.character(dpax2019$ArrivalDt)
+dpax2019$ArrivalDtMD = sub('2019-', '', dpax2019$ArrivalDtMD)
 
+dpaxCOV$ArrivalDtMD = as.character(dpaxCOV$ArrivalDt)
+dpaxCOV$ArrivalDtMD = sub('2020-', '', dpaxCOV$ArrivalDtMD)
+dpaxCOV$ArrivalDtMD = sub('2021-', '', dpaxCOV$ArrivalDtMD)
 
+dpax2019 = subset(dpax2019, select = -ArrivalDt)
 
 
 
