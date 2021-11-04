@@ -312,6 +312,12 @@ TourismDollars = left_join(tourdolCOV, tourdol2019, by="Month", suffix=c(".COV",
 
 TourismDollars = subset(TourismDollars, select = -c(Month, YrMonth.2019))
 
+TourismDollars$YrMonthCOV = TourismDollars$YrMonth.COV
+TourismDollars$MillionDollarsCOV = TourismDollars$MillionDollars.COV
+TourismDollars$MillionDollars2019 = TourismDollars$MillionDollars.2019
+
+TourismDollars = subset(TourismDollars, select = -c(YrMonth.COV, MillionDollars.COV, MillionDollars.2019))
+
 write.csv(TourismDollars, file='TourismDollars.csv')
 
 ############################### Graph in Python ###############################
