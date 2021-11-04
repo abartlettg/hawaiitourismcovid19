@@ -31,9 +31,12 @@ setwd("C:/Users/adria/NYCDSA/DataAnalytics/HCT")
 ############## My Data Directory and these files disappeared on PC ############
 ############## Need to copy back from GitHub ##################################
 
-ccbrs <- read.csv("Data/COVIDCasesByResidentStatus.csv")
-tsdc <- read.csv("Data/TourismStatsDuringCOVID.csv")
-hcrt <- read.csv("Data/HawaiiCOVIDRulesTimeline.csv")
+#ccbrs <- read.csv("Data/COVIDCasesByResidentStatus.csv")
+ccbrs <- read.csv("https://raw.githubusercontent.com/abartlettg/hawaiitourismcovid19/main/COVIDCasesByResidentStatus.csv")
+#tsdc <- read.csv("Data/TourismStatsDuringCOVID.csv")
+tsdc <- read.csv("https://raw.githubusercontent.com/abartlettg/hawaiitourismcovid19/main/TourismData.csv")
+#hcrt <- read.csv("Data/HawaiiCOVIDRulesTimeline.csv")
+hcrt <- read.csv("https://raw.githubusercontent.com/abartlettg/hawaiitourismcovid19/main/HawaiiCOVIDRulesTimeline.csv")
 
 # Clean up colnames and NAs introduced by Excel when saving as .csv
 
@@ -252,10 +255,68 @@ dpax2019 = subset(dpax2019, select = -ArrivalDt)
 
 dpax = left_join(dpaxCOV, dpax2019, by="ArrivalDtMD", suffix=c(".COV",".2019"))
 
+dpax$TotalCOV = dpax$Total.COV
+dpax$Total2019 = dpax$Total.2019
+dpax = subset(dpax, select = -c(Total.COV, Total.2019))
+
 write.csv(dpax, file='dpax.csv')
 
 ################# GOING TO PYTHON NOW TO GRAPH ##########################
 
+# Monthly Recorded Traveler Expenditure Comparison of 2019 data to COVID
+# No Data Recorded from 4/20-10/20
+# US Traveler Data added back in for 11/20-12/20
+# All Data back in from 1/21 on
+# I considered imputing traveler expenditure for the missing periods, but
+# then gave further consideration as to why Hawaii would stop tracking this
+# data for this time period... when all travelers were subject to 14 day
+# quarantine... it cannot be accurately imputed because travelers do not
+# spend nearly as much money when in quarantine... basically, buying food 
+# to be delivered to their quarantine location and nothing else.  And, the
+# majority of the small amount of travelers coming in being returning 
+# residents, family of residents, and new residents.  Basically, you do NOT
+# have Tourism during this time because most everything is closed, even
+# beaches, and nobody goes to Hawaii to spend two weeks trapped in their
+# hotel room.  
+
+tourdol = tsdc %>%
+  filter(Indicator == 'Expenditure' &
+           Market == 'Total')
+
+tourdol = pivot_longer(tourdol, 5:36, names_to = 'YrMonth', 
+                        values_to = 'MillionDollars')
+
+tourdol$MillionDollars = sub(',','',tourdol$MillionDollars)
+
+tourdol$MillionDollars = as.numeric(tourdol$MillionDollars)
+
+tourdol[is.na(tourdol)] = 0.00
+
+tourdol$YrMonth = sub('X','',tourdol$YrMonth)
+
+tourdol = subset(tourdol, select = names(tourdol) %in% c('YrMonth','MillionDollars'))
+
+tourdol2019 = tourdol %>%
+  filter(YrMonth < '2020.01')
+
+tourdolCOV = tourdol %>%
+  filter(YrMonth > '2020.02')
+
+tourdol2019$Month = sub('2019.', '', tourdol2019$YrMonth)
+
+tourdolCOV$Month = tourdolCOV$YrMonth
+tourdolCOV$Month = sub('2020.', '', tourdolCOV$Month)
+tourdolCOV$Month = sub('2021.', '', tourdolCOV$Month)
+
+TourismDollars = left_join(tourdolCOV, tourdol2019, by="Month", suffix=c(".COV",".2019"))
+
+TourismDollars = subset(TourismDollars, select = -c(Month, YrMonth.2019))
+
+write.csv(TourismDollars, file='TourismDollars.csv')
+
+############################### Graph in Python ###############################
+
+  
 
 
 
