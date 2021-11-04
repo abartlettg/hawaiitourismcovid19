@@ -317,6 +317,8 @@ TourismDollars$MillionDollarsCOV = TourismDollars$MillionDollars.COV
 TourismDollars$MillionDollars2019 = TourismDollars$MillionDollars.2019
 
 TourismDollars = subset(TourismDollars, select = -c(YrMonth.COV, MillionDollars.COV, MillionDollars.2019))
+#TourismDollars$YrMonthCOV = sub('.', '-', TourismDollars$YrMonthCOV)
+#TourismDollars$YrMonthCOV <- as.Date(TourismDollars$YrMonthCOV, "%Y.%m")
 
 write.csv(TourismDollars, file='TourismDollars.csv')
 
