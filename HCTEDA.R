@@ -283,7 +283,7 @@ tourdol = tsdc %>%
   filter(Indicator == 'Expenditure' &
            Market == 'Total')
 
-tourdol = pivot_longer(tourdol, 5:36, names_to = 'YrMonth', 
+tourdol = pivot_longer(tourdol, 5:37, names_to = 'YrMonth', 
                         values_to = 'MillionDollars')
 
 tourdol$MillionDollars = sub(',','',tourdol$MillionDollars)
@@ -310,7 +310,11 @@ tourdolCOV$Month = sub('2021.', '', tourdolCOV$Month)
 
 TourismDollars = left_join(tourdolCOV, tourdol2019, by="Month", suffix=c(".COV",".2019"))
 
-TourismDollars = subset(TourismDollars, select = -c(Month, YrMonth.2019))
+TourismDollars = subset(TourismDollars, select = -c(YrMonth.2019))
+# Changed to leave in Month since this would need to be included for
+# correlation testing as a continuous variable... since we know that
+# tourism spending is seasonal.
+# TourismDollars = subset(TourismDollars, select = -c(Month, YrMonth.2019))
 
 TourismDollars$YrMonthCOV = TourismDollars$YrMonth.COV
 TourismDollars$MillionDollarsCOV = TourismDollars$MillionDollars.COV
@@ -324,7 +328,68 @@ write.csv(TourismDollars, file='TourismDollars.csv')
 
 ############################### Graph in Python ###############################
 
-  
+#########################################################################
+# Correlation Testing on Tourism Spending and Travel Restrictions
+# Will use a subset of data from the HCRT data focusing just on state
+# entry & access rqmts and combine with the TourismDollars data.  Because
+# tourism expendiditure data is only available summarized by month, but
+# these restrictions do not necessarily start at the beginning nor end
+# at the end of the month, we will include the month if the rule was
+# in place for the majority of the month.
+########################################################################
+
+earules <- read.csv("EntryAndAccessRules.csv")
+
+earules$YrMonthCOV = as.character(earules$YrMonthCOV)
+TourismDollars$Month = as.numeric(TourismDollars$Month)
+
+# Turns 2020.10 into 2020.1 so need to fix this for join
+earules[earules == "2020.1"] <- "2020.10"
+
+tdwrd = left_join(TourismDollars, earules, by="YrMonthCOV")
+
+library(ggcorrplot)
+
+cor(tdwrd[,unlist(lapply(tdwrd, is.numeric))])
+
+library(psych)
+pairs.panels(tdwrd)
+
+### Not useful for this study or presentation
+### If anything, we'd just want to show correlation between the entry
+### and access rules with TourismDollarsCOV
+
+##### Going down a rabbit hole with this... get back to basics of what
+##### I know I want to show in presentation.
 
 
+# Simple sum of Tourism $ lost since the Onset of COVID
+TourismDollars <- TourismDollars %>%
+  mutate(MillionDollarsLost = MillionDollars2019 -
+           MillionDollarsCOV)
 
+sum(TourismDollars$MillionDollarsLost)
+
+# Timeline showing change in percentage of travel-related covid cases vs
+# all cases of known origin (travel+community) in Hawaii over time
+
+colnames(ccbrstots)[3] <- "Num"
+
+ccbrstots = pivot_wider(ccbrstots, names_from = Risk, values_from = Num)
+
+colnames(ccbrstots)[2] <- "TravelR"
+colnames(ccbrstots)[3] <- "TravelNR"
+colnames(ccbrstots)[4] <- "Community"
+colnames(ccbrstots)[5] <- "UnkPend"
+ccbrstots[is.na(ccbrstots)] = 0
+
+ccbrstots$AllKnown = (ccbrstots$TravelR + ccbrstots$TravelNR +
+  ccbrstots$Community)
+
+ccbrstots$PercentTravRel = (((ccbrstots$TravelR + ccbrstots$TravelNR)/ccbrstots$AllKnown)*100)
+
+write.csv(ccbrstots, file='CCPercentTravRel.csv')
+
+######## Go to Python to Graph #########
+
+## Add in Percentage Resident vs Non-Resident
